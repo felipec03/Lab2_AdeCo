@@ -4,6 +4,8 @@
 	mensajeCombinacion: .asciiz "Combinación seleccionada\n"
 	mensajeVariacion: .asciiz "Variación seleccionada\n"
 	numeroEleccion: .word 0
+	numeroN: .word 0
+	numeroM: .word 0
 .text
 	.globl main
 	main:

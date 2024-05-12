@@ -1,5 +1,6 @@
 # Lab 2: Codigo 1, Implementacion de BubbleSort
 .data
+	# La cantidad maxima de numeros a ingresar por consola es de 8 numeros.
 	arreglo1: .word 0:8 # input1
 	mensaje1: .asciiz "Insertar secuencia de a los mas 8 numeros enteros. \nEsta secuancia sera ordenada por medio de Bubblesort: \n"
 .text
