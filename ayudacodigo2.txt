@@ -1,0 +1,130 @@
+To implement multiplication and division subroutines in MIPS 32 Assembly without using the instructions you mentioned, we need to use a combination of shift and add/subtract operations. Here's an implementation:
+
+Multiplication Subroutine:
+
+```
+.text
+.globl multi
+
+multi:
+    # Save registers
+    addi $sp, $sp, -20
+    sw $ra, 16($sp)
+    sw $s0, 12($sp)
+    sw $s1, 8($sp)
+    sw $s2, 4($sp)
+    sw $s3, 0($sp)
+
+    # Initialize variables
+    move $s0, $a0   # multiplicand
+    move $s1, $a1   # multiplier
+    li $s2, 0       # product
+    li $s3, 0       # counter
+
+loop:
+    # Check if multiplier is odd
+    andi $t0, $s1, 1
+    beq $t0, $zero, skip
+
+    # Add multiplicand to product
+    addu $s2, $s2, $s0
+
+skip:
+    # Shift multiplicand left
+    sll $s0, $s0, 1
+
+    # Shift multiplier right
+    srl $s1, $s1, 1
+
+    # Increment counter
+    addi $s3, $s3, 1
+
+    # Check if counter is 32
+    bne $s3, 32, loop
+
+    # Move product to return register
+    move $v0, $s2
+
+    # Restore registers
+    lw $ra, 16($sp)
+    lw $s0, 12($sp)
+    lw $s1, 8($sp)
+    lw $s2, 4($sp)
+    lw $s3, 0($sp)
+    addi $sp, $sp, 20
+
+    jr $ra
+```
+
+Division Subroutine:
+
+```
+.text
+.globl divide
+
+divide:
+    # Save registers
+    addi $sp, $sp, -20
+    sw $ra, 16($sp)
+    sw $s0, 12($sp)
+    sw $s1, 8($sp)
+    sw $s2, 4($sp)
+    sw $s3, 0($sp)
+
+    # Initialize variables
+    move $s0, $a0   # dividend
+    move $s1, $a1   # divisor
+    li $s2, 0       # quotient
+    li $s3, 0       # remainder
+
+loop:
+    # Shift dividend left
+    sll $s0, $s0, 1
+
+    # Check if dividend is greater than or equal to divisor
+    slt $t0, $s0, $s1
+    beq $t0, $zero, skip
+
+    # Subtract divisor from dividend
+    subu $s0, $s0, $s1
+
+skip:
+    # Shift quotient left
+    sll $s2, $s2, 1
+
+    # Check if dividend is greater than or equal to divisor
+    slt $t0, $s0, $s1
+    beq $t0, $zero, set_bit
+
+    # Increment quotient
+    addi $s2, $s2, 1
+
+set_bit:
+    # Decrement counter
+    addi $s3, $s3, -1
+
+    # Check if counter is -32
+    bne $s3, -32, loop
+
+    # Move quotient and remainder to return registers
+    move $v0, $s2
+    move $v1, $s0
+
+    # Restore registers
+    lw $ra, 16($sp)
+    lw $s0, 12($sp)
+    lw $s1, 8($sp)
+    lw $s2, 4($sp)
+    lw $s3, 0($sp)
+    addi $sp, $sp, 20
+
+    jr $ra
+```
+
+Both subroutines follow a similar approach. The multiplication subroutine `multi` takes two arguments: the multiplicand ($a0) and the multiplier ($a1). It initializes a product variable ($s2) and a counter ($s3). In each iteration of the loop, it checks if the multiplier is odd. If so, it adds the multiplicand to the product. Then, it shifts the multiplicand left and the multiplier right. The loop continues until the counter reaches 32.
+
+The division subroutine `divide` takes two arguments: the dividend ($a0) and the divisor ($a1). It initializes a quotient variable ($s2) and a remainder variable ($s3). In each iteration of the loop, it shifts the dividend left and checks if it's greater than or equal to the divisor. If so, it subtracts the divisor from the dividend and sets the corresponding bit in the quotient. The loop continues until the counter reaches -32.
+
+Both subroutines save and restore the necessary registers to preserve the state of the program.
+
+Note that these subroutines assume that the input values are non-negative integers. If you need to handle negative values or overflow cases, additional checks and handling would be required.
